@@ -1,0 +1,12 @@
+.wh-input{
+  width: 160px!important;
+}
+.box-scroll{
+  overflow-y: scroll;
+  background-color: #ffffff;
+  width: 160px;
+  max-height: 200px;
+}
+.box-scroll::-webkit-scrollbar {
+  width: 0;
+}

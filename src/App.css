@@ -1,0 +1,10 @@
+.leftContainerStyle{
+  width: 185px!important;
+}
+
+.rightContainerStyle{
+  width: calc(100% - 185px)!important;
+}
+.inputW{
+  width: 120px!important;
+}
