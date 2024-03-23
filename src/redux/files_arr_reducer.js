@@ -138,11 +138,6 @@ export const getDataFilesThunkCreater = (files) => {
   *             "contact B": "yyyyyyyyyy",
   *             "time": 44967.458333333336
   *         },
-  *         {
-  *             "contact A": "xxxxxxxxxx",
-  *             "contact B": "yyyyyyyyyy",
-  *             "time": 44968.458333333336
-  *         },
   *     ]
   * }
   */ 
@@ -194,7 +189,23 @@ export const getFilterForTimeThunkCreater =
           if(Object.keys(res).length > 0) accumulatorData = [...accumulatorData, res];
           return accumulatorData;
       }, []);
-      dispatch(actionDataSortByTime(sortResult));
+
+      const sortByFirstNumber = sortResult.reduce((accumulator, currentValue) => {
+        for(const key in currentValue){
+          const res = accumulator.find(item => (item[firstNumberСolumn] === key)? item : undefined)
+          if(res === undefined){
+            accumulator = [...accumulator, {[firstNumberСolumn]: key, [secondNumberСolumn]: currentValue[key], group: key}]
+          } else {
+            accumulator[accumulator.indexOf(res)] = 
+              {[firstNumberСolumn]: key, [secondNumberСolumn]:(res[secondNumberСolumn].length > currentValue[key].length) 
+                ? res[secondNumberСolumn] : currentValue[key]};
+          }
+        }
+        return accumulator;
+      }, []);
+
+
+      dispatch(actionDataSortByTime(sortByFirstNumber));
       const functionEndTime = new Date().getTime();
       dispatch(actionCreatorEvents('Выполнена сортировка записей за период, затрачено время: ' + (functionEndTime - functionStartTime) + ' мс.'));
     }
@@ -204,10 +215,10 @@ export const getFilterForTimeThunkCreater =
 export const nodesAndEdgesThunkCreater = 
   data => {
     return (dispatch) => {
-      console.log(data)
-      // Сортировка по числу повторений внутри каждого объектаb
+      const functionStartTime = new Date().getTime();
+      // Сортировка по числу повторений внутри каждого объекта
       const sortByContacts = data.reduce((acc, val) => {
-        const contactA = val['contact A'], contactB = val['contact B'];
+        const contactB = val['contact B'];
         const internalSorting = contactB.reduce((acc1, val1) => {
             const contactB1 = val1['contact B'];
             // Ищем совпадение в массиве - аккомуляторе, если не находим добавляем, если находим добавляем знаяение count
@@ -235,15 +246,6 @@ export const nodesAndEdgesThunkCreater =
       //             "count": 1,
       //             "coincidence": true
       //         }
-      //     ],
-      //     [
-      //         {
-      //             "contact A": "cccccccccc",
-      //             "contact B": "zzzzzzzzzz",
-      //             "count": 1,
-      //             "mainNodes": true,
-      //             "coincidence": false
-      //         }
       //     ]
       // ]
       const sortMainNode = sortByContacts.map(arr => {
@@ -260,14 +262,6 @@ export const nodesAndEdgesThunkCreater =
       //             "contact B": "yyyyyxxzzz",
       //             "count": 4,
       //             "coincidence": false
-      //         },
-      //     ],
-      //     [
-      //         {
-      //             "contact A": "zzzzzzzzzz",
-      //             "contact B": "22222yyyyy",
-      //             "count": 1,
-      //             "coincidence": true
       //         },
       //     ]
       // ]
@@ -298,14 +292,6 @@ export const nodesAndEdgesThunkCreater =
       //             "coincidence": true
       //         },
       //     ],
-      //     [
-      //         {
-      //             "contact A": "zzzzzzzzzz",
-      //             "contact B": "22222yyyyy",
-      //             "count": 1,
-      //             "coincidence": true
-      //         },
-      //     ]
       // ]
 
       // Сортируем массив по пересечению и связям с главными узлами
@@ -319,8 +305,6 @@ export const nodesAndEdgesThunkCreater =
       // Приводим данные к одному массиву
       const concatArr = excludeCoincidenceOrMainNodes.reduce((acc, val) => (acc.concat(val)), []);
 
-
-      console.log(concatArr);
       const nodes = concatArr.reduce((acc, val) => {
         let id = acc.length;
         const serchContactA = acc.some(item => item['label'] === val['contact A']);
@@ -338,6 +322,7 @@ export const nodesAndEdgesThunkCreater =
         return acc;
       }, []);
       dispatch(actionCreatorEdges(edges));
-
-      }
+      const functionEndTime = new Date().getTime();
+      dispatch(actionCreatorEvents('edges и edges созданы, затрачено время: ' + (functionEndTime - functionStartTime) + ' мс.'));
+    }
 }

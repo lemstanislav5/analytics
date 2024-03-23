@@ -16,7 +16,7 @@ import {
   getDataFilesThunkCreater, 
   actionCreatorEvents, 
   getFilterForTimeThunkCreater,
-  nodesAndEdgesThunkCreater
+  nodesAndEdgesThunkCreater,
 } from '../../redux/files_arr_reducer';
 import { actionCreatorSetOption } from '../../redux/options_reducer';
 import {
@@ -62,10 +62,9 @@ const RightNav = (props) => {
 
   useEffect(() => {
     if (dataSortByTime.length !== 0) {
-      console.log(dataSortByTime)
-      // dispatch(nodesAndEdgesThunkCreater(dataSortByTime));
+      dispatch(nodesAndEdgesThunkCreater(dataSortByTime));
     }
-  }, [dataSortByTime]);
+  }, [dataSortByTime, dispatch, firstNumberСolumn, secondNumberСolumn]);
 
   useEffect(() => {
     if (data.length !== 0 && startTime !== undefined && endTime !== undefined && startTime !== undefined && firstNumberСolumn !== undefined && secondNumberСolumn !== undefined && timeСolumn  !== undefined && dataSortByTime.length === 0) {
