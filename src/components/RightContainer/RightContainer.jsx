@@ -37,8 +37,6 @@ import {
 } from '../../redux/selectors';
 import VisNetwork from './VisNetwork';
 import { saveImg } from '../../utilities/utilities';
-const nodes = [{id: 1, label: 'Using', group: 'action'}, {id: 2, label: 'JavaScript', group: 'tool'}];
-const edges = [{from: 1, to: 2, label: "horizontal", font: { align: "horizontal" }}];
 const RightNav = (props) => {
   const {
     getDataFiles,
@@ -51,7 +49,7 @@ const RightNav = (props) => {
   } = props;
   const dispatch = useDispatch();
   const {networkLink} = useSelector(store => store.vis);
-  const {dir, data, dataSortByTime} = useSelector(store => store.files);
+  const {dir, data, dataSortByTime, nodes, edges} = useSelector(store => store.files);
   const {startTime, endTime, firstNumberСolumn, secondNumberСolumn, timeСolumn, physics, searchDepth, numberOfCharacters,  mutualСonnections} = useSelector(store => store.options);
 
   const selectColumns = (name, value) => dispatch(actionCreatorSetOption(name, value));
@@ -75,35 +73,17 @@ const RightNav = (props) => {
   }, [startTime, endTime, firstNumberСolumn, secondNumberСolumn, timeСolumn, data, addEvent, dispatch, dataSortByTime]);
 
   const [state, setState] = useState({
-    operationsBetweenCardsFlag: false,
-    receiptsFromPaymentSystemsFlag: false,
-    generalAnalysisOfReceiptsFlag: false,
-    inputFlag: true,
     newLable: undefined
   });
   const [fileDescription, setFileDescription] = useState(null);
-  const [events, setEvents] = useState([]);
-
-  /**
-   *        edges={arrows} 
-            nodes={points} 
-            physics={options.physics} 
-            setNetworkLink={setNetworkLink} 
-            setIdSelectNode={setIdSelectNode}
-   */
-  // useEffect(() => {
-  //   if (points.length === 0 && arrows.length === 0) {
-  //     setPoints(pointsSelector);
-  //     setArrows(arrowsSelector);
-  //   }
+  const [buildDiagram, setBuildDiagram] =  useState(false);
   
-  // }, [points, arrowsSelector, pointsSelector, arrows]);
   //!network----------------------------------------------------------------------------------
   const deletePoint = () => {
     networkLink.deleteSelected(idSelectNode[0])
   };
   const addNewPoint = (e) => {
-    const id = Object.values(networkLink.body.nodes).reduce((accumulator, currentValue, index, array) => {
+    const id = Object.values(networkLink.body.nodes).reduce((accumulator, currentValue) => {
       if(accumulator < currentValue.id) accumulator = currentValue.id;
       return accumulator;
     }, 0);
@@ -136,15 +116,7 @@ const RightNav = (props) => {
     selectDir(name, path);
     getDataFiles(event.target.files);
   };
-  const operationsBetweenCards = () => {
-    if (points.length > 0)
-      setState({
-        ...state,
-        operationsBetweenCardsFlag: true,
-        receiptsFromPaymentSystemsFlag: false,
-        generalAnalysisOfReceiptsFlag: false,
-      });
-  };
+
   const resetData = () =>  window.location.reload();
   const handleChange = (event) => selectColumns(event.target.name, event.target.value);
   
@@ -236,8 +208,8 @@ const RightNav = (props) => {
                 <Button
                   size="sm"
                   variant="primary"
-                  onClick={operationsBetweenCards}
-                  disabled={(points.length > 0 && arrows.length > 0)? false: true}
+                  onClick={() => setBuildDiagram(true)}
+                  disabled={(nodes.length > 0 && edges.length > 0)? false: true}
                 >
                   Построить схему
                 </Button>
@@ -247,7 +219,7 @@ const RightNav = (props) => {
                   size="sm"
                   variant="primary"
                   onClick={resetData}
-                  disabled={(points.length > 0 && arrows.length > 0)? false: true}
+                  disabled={(nodes.length > 0 && edges.length > 0)? false: true}
                 >
                   Очистить
                 </Button>
@@ -257,7 +229,7 @@ const RightNav = (props) => {
                   size="sm"
                   variant="danger"
                   onClick={deletePoint}
-                  disabled={(points.length > 0 && arrows.length > 0)? false: true}
+                  disabled={(nodes.length > 0 && edges.length > 0)? false: true}
                 >
                   <SvgImages svg='del'/>
                 </Button>
@@ -271,7 +243,7 @@ const RightNav = (props) => {
                   value={state.newLable}
                   name="newPoint"
                   onChange={changeNewLable}
-                  disabled={(points.length > 0 && arrows.length > 0)? false: true}
+                  disabled={(nodes.length > 0 && edges.length > 0)? false: true}
                 />
               </Col>
               <Col xs="auto" className="my-1">
@@ -279,7 +251,7 @@ const RightNav = (props) => {
                   size="sm"
                   variant="danger"
                   onClick={addNewPoint}
-                  disabled={(points.length > 0 && arrows.length > 0)? false: true}
+                  disabled={(nodes.length > 0 && edges.length > 0)? false: true}
                 >
                   <SvgImages svg='add'/>
                 </Button>
@@ -297,7 +269,7 @@ const RightNav = (props) => {
                   size="sm"
                   variant="danger"
                   onClick={addNewArrows}
-                  disabled={(points.length > 0 && arrows.length > 0)? false: true}
+                  disabled={(nodes.length > 0 && edges.length > 0)? false: true}
                 >
                   <SvgImages svg='arrows'/>
                 </Button>
@@ -327,24 +299,15 @@ const RightNav = (props) => {
         }
         
       <div className="overflow-auto d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-        {state.operationsBetweenCardsFlag ? (
-          <VisNetwork 
-            edges={edges} 
-            nodes={nodes} 
-            physics={physics} 
-            setNetworkLink={setNetworkLink} 
-            setIdSelectNode={setIdSelectNode}
-          />
-        ) : (
-          ""
-        )}
-         <VisNetwork 
-            edges={edges} 
-            nodes={nodes} 
-            physics={physics} 
-            setNetworkLink={setNetworkLink} 
-            setIdSelectNode={setIdSelectNode}
-          />
+         {buildDiagram && 
+            <VisNetwork 
+                edges={edges} 
+                nodes={nodes} 
+                physics={physics} 
+                setNetworkLink={setNetworkLink} 
+                setIdSelectNode={setIdSelectNode}
+              />
+          }
       </div>
     </div>
   );

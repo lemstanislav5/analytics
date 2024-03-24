@@ -58,10 +58,10 @@ export const filesArrReducer = (state = initialState, action) => {
       };  
     }
     case ADD_NODES: {
-      return { ...state, points: action.arr };
+      return { ...state, nodes: action.arr };
     }
     case ADD_EDGES: {
-      return { ...state, arrows: action.arr };
+      return { ...state, edges: action.arr };
     }
     default: {
       return state;

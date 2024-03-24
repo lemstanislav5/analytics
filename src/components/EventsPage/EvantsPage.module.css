@@ -1,0 +1,10 @@
+.item{
+  font-size: 12px;
+    padding: 5px 11px;
+    margin: 0;
+    color: #fff;
+    background: #212529;
+}
+.item>p{
+  margin-bottom: 0!important;
+}
