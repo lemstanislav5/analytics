@@ -8,7 +8,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import EventsPage from '../EventsPage/EventsPage';
-import { connect } from 'react-redux';
 import '../../App.css';
 import { SvgImages } from '../images/SvgImages';
 import { 
@@ -17,46 +16,29 @@ import {
   actionCreatorEvents, 
   getFilterForTimeThunkCreater,
   nodesAndEdgesThunkCreater,
-} from '../../redux/files_arr_reducer';
+} from '../../redux/files_reducer';
 import { actionCreatorSetOption } from '../../redux/options_reducer';
 import {
-  actionCreatorPoints,
-  actionCreatorArrows,
   actionCreatorNetworkLink,
   actionCreatorIdSelectNode,
 } from '../../redux/vis_reducer';
-import {
-  getWidthHeightConvas,
-  getPoints,
-  getArrows,
-  pointsСreator,
-  arrowsСreator,
-  getIdSelectNode,
-  getNetworkLink,
-  getLoadedFiles,
-} from '../../redux/selectors';
 import VisNetwork from './VisNetwork';
 import { saveImg } from '../../utilities/utilities';
-const RightNav = (props) => {
-  const {
-    getDataFiles,
-    selectDir,
-    points,
-    arrows,
-    idSelectNode,
-    progress,
-    loadedFiles,
-  } = props;
-  const dispatch = useDispatch();
-  const {networkLink} = useSelector(store => store.vis);
-  const {dir, data, dataSortByTime, nodes, edges} = useSelector(store => store.files);
-  const {startTime, endTime, firstNumberСolumn, secondNumberСolumn, timeСolumn, physics, searchDepth, numberOfCharacters,  mutualСonnections} = useSelector(store => store.options);
 
+export const RightContainer = () => {
+  const dispatch = useDispatch();
+  const {networkLink} = useSelector(state => state.vis);
+  const {loadedFiles} = useSelector(state => state.files);
+  const {dir, data, dataSortByTime, nodes, edges} = useSelector(state => state.files);
+  const {startTime, endTime, firstNumberСolumn, secondNumberСolumn, timeСolumn, physics, searchDepth, numberOfCharacters,  mutualСonnections} = useSelector(state => state.options);
+  const {idSelectNode} = useSelector(state => state.vis);
   const selectColumns = (name, value) => dispatch(actionCreatorSetOption(name, value));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addEvent = useCallback((str) => dispatch(actionCreatorEvents(str)));
   const setNetworkLink = (networkLink) => dispatch(actionCreatorNetworkLink(networkLink));
   const setIdSelectNode = id =>  dispatch(actionCreatorIdSelectNode(id));
+  const selectDir = (name, path) => dispatch(selectDirThunkCreater(name, path));
+  const getDataFiles = (dir) => dispatch(getDataFilesThunkCreater(dir));
 
   useEffect(() => {
     if (dataSortByTime.length !== 0) {
@@ -290,9 +272,6 @@ const RightNav = (props) => {
           :
           <Row className="d-flex align-items-end flex-row "> 
             <Col xs="auto" className="me-sm-6 col-md-6">
-              <ProgressBar now={progress} label={`${progress}%`}/>
-            </Col>
-            <Col xs="auto" className="me-sm-6 col-md-6">
                <span>прочитан {loadedFiles[0]} файл из {loadedFiles[1]}</span>
             </Col>
           </Row>
@@ -312,29 +291,3 @@ const RightNav = (props) => {
     </div>
   );
 };
-
-const mapStateToProps = (state) => {
-  return {
-    // files: state.files,
-    pointsSelector: pointsСreator(state),
-    arrowsSelector: arrowsСreator(state),
-    widthHeightConvas: getWidthHeightConvas(state),
-    points: getPoints(state),
-    arrows: getArrows(state),
-    idSelectNode: getIdSelectNode(state),
-    loadedFiles: getLoadedFiles(state),
-
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    selectDir: (name, path) => dispatch(selectDirThunkCreater(name, path)),
-    getDataFiles: (dir) => dispatch(getDataFilesThunkCreater(dir)),
-    setPoints: (data) => dispatch(actionCreatorPoints(data)),
-    setArrows: (data) => dispatch(actionCreatorArrows(data)),
-  };
-};
-
-const RightContainer = connect(mapStateToProps, mapDispatchToProps)(RightNav);
-export default RightContainer;

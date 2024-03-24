@@ -1,20 +1,20 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable react/forbid-prop-types */
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { connect } from 'react-redux';
 import { actionCreatorSetOption } from '../../redux/options_reducer';
-import { getPoints, getNetworkLink } from '../../redux/selectors';
 import "./LeftContainer.css";
 import { actionCreatorIdSelectNode } from '../../redux/vis_reducer';
-import '../../App.css';
 
-const LeftNav = (props) => {
-  const { setOption, options, points, network, setIdSelectNode } = props;
-  const { startTime, endTime, physics, mutualСonnections } = options;
+export const LeftContainer = () => {
+  const { nodes, networkLink } = useSelector(store => store.vis);
+  const { startTime, endTime, physics, mutualСonnections } = useSelector(store => store.options); 
+  const dispatch = useDispatch();
+  const setOption = (name, value) => dispatch(actionCreatorSetOption(name, value));
+  const setIdSelectNode = id =>  dispatch(actionCreatorIdSelectNode(id));
 
   const [arrSelect, setArrSelect] = useState([]);
 
@@ -24,7 +24,7 @@ const LeftNav = (props) => {
   const handleSearch  = (event) =>  {
     let str = event.target.value;
     if(str.length > 6) {
-      let res = points.filter(item => {
+      let res = nodes.filter(item => {
         if(item["label"].indexOf(str) > -1) return item;
       })
       setArrSelect(res);
@@ -34,10 +34,10 @@ const LeftNav = (props) => {
   }
   const handleClickEl  = (event) =>  {
     let str = event.target.innerHTML;
-    let res = points.find(item => {
+    let res = nodes.find(item => {
       if(item["label"].indexOf(str) > -1) return item;
     })
-    network.selectNodes([res["id"]]);
+    networkLink.selectNodes([res["id"]]);
     setIdSelectNode(res["id"]);
   }
   return (
@@ -160,41 +160,3 @@ const LeftNav = (props) => {
     </div>
   );
 };
-
-const mapStateToProps = (state) => {
-  return {
-    options: state.options,
-    points: getPoints(state),
-    network: getNetworkLink(state)
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setOption: (name, value) => dispatch(actionCreatorSetOption(name, value)),
-    setIdSelectNode: id =>  dispatch(actionCreatorIdSelectNode(id))
-  };
-};
-
-LeftNav.propTypes = {
-  options: PropTypes.object,
-  from: PropTypes.string,
-  to: PropTypes.string,
-  physics: PropTypes.bool,
-  setOption: PropTypes.func,
-  points: PropTypes.array,
-  network: PropTypes.object,
-  setIdSelectNode: PropTypes.func,
-};
-LeftNav.defaultProps = {
-  options: {},
-  from: '',
-  to: '',
-  physics: true,
-  setOption: () => {},
-  points: [],
-  network: {},
-  setIdSelectNode: () => {},
-};
-const LeftContainer = connect(mapStateToProps, mapDispatchToProps)(LeftNav);
-export default LeftContainer;

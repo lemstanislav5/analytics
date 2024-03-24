@@ -1,7 +1,7 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { optionReducer } from './options_reducer';
-import { filesArrReducer } from './files_arr_reducer';
+import { filesArrReducer } from './files_reducer';
 import { visReducer } from './vis_reducer';
 
 const rootReducer = combineReducers({

@@ -1,8 +1,9 @@
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
-import LeftContainer from './components/LeftContainer/LeftContainer';
-import RightContainer from './components/RightContainer/RightContainer';
+import { LeftContainer } from './components/LeftContainer/LeftContainer';
+import { RightContainer } from './components/RightContainer/RightContainer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect } from 'react';
+import './App.css';
 
 export default function App() {
   useEffect(() => {
