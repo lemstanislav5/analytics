@@ -1,12 +1,10 @@
 /* eslint-disable react/jsx-no-duplicate-props */
 import React, { useEffect, useState, useCallback } from 'react';
-import { log } from '../../utilities/log';
 import {useDispatch, useSelector} from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import ProgressBar from 'react-bootstrap/ProgressBar';
 import EventsPage from '../EventsPage/EventsPage';
 import '../../App.css';
 import { SvgImages } from '../images/SvgImages';
@@ -18,20 +16,17 @@ import {
   nodesAndEdgesThunkCreater,
 } from '../../redux/files_reducer';
 import { actionCreatorSetOption } from '../../redux/options_reducer';
-import {
-  actionCreatorNetworkLink,
-  actionCreatorIdSelectNode,
-} from '../../redux/vis_reducer';
+import { actionCreatorNetworkLink, actionCreatorIdSelectNode } from '../../redux/vis_reducer';
 import VisNetwork from './VisNetwork';
 import { saveImg } from '../../utilities/utilities';
 
 export const RightContainer = () => {
   const dispatch = useDispatch();
-  const {networkLink} = useSelector(state => state.vis);
-  const {loadedFiles} = useSelector(state => state.files);
-  const {dir, data, dataSortByTime, nodes, edges} = useSelector(state => state.files);
+  const {networkLink} = useSelector(store => store.vis);
+  const {loadedFiles} = useSelector(store => store.files);
+  const {dir, data, dataSortByTime, nodes, edges} = useSelector(store => store.files);
   const {startTime, endTime, firstNumberСolumn, secondNumberСolumn, timeСolumn, physics, searchDepth, numberOfCharacters,  mutualСonnections} = useSelector(state => state.options);
-  const {idSelectNode} = useSelector(state => state.vis);
+  const {idSelectNode} = useSelector(store => store.vis);
   const selectColumns = (name, value) => dispatch(actionCreatorSetOption(name, value));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addEvent = useCallback((str) => dispatch(actionCreatorEvents(str)));
@@ -42,9 +37,9 @@ export const RightContainer = () => {
 
   useEffect(() => {
     if (dataSortByTime.length !== 0) {
-      dispatch(nodesAndEdgesThunkCreater(dataSortByTime));
+      dispatch(nodesAndEdgesThunkCreater(dataSortByTime, mutualСonnections));
     }
-  }, [dataSortByTime, dispatch, firstNumberСolumn, secondNumberСolumn]);
+  }, [dataSortByTime, dispatch, firstNumberСolumn, secondNumberСolumn, mutualСonnections]);
 
   useEffect(() => {
     if (data.length !== 0 && startTime !== undefined && endTime !== undefined && startTime !== undefined && firstNumberСolumn !== undefined && secondNumberСolumn !== undefined && timeСolumn  !== undefined && dataSortByTime.length === 0) {

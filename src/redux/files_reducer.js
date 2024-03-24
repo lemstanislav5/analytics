@@ -203,8 +203,6 @@ export const getFilterForTimeThunkCreater =
         }
         return accumulator;
       }, []);
-
-
       dispatch(actionDataSortByTime(sortByFirstNumber));
       const functionEndTime = new Date().getTime();
       dispatch(actionCreatorEvents('Выполнена сортировка записей за период, затрачено время: ' + (functionEndTime - functionStartTime) + ' мс.'));
@@ -213,8 +211,10 @@ export const getFilterForTimeThunkCreater =
 
 
 export const nodesAndEdgesThunkCreater = 
-  data => {
-    return (dispatch) => {
+  (data, mutualСonnections) => {
+    //!возможно задвоение числа связей
+    console.warn('Сортировка по числу повторений внутри каждого объекта, возможно задвоение числа связей.')
+    return dispatch => {
       const functionStartTime = new Date().getTime();
       // Сортировка по числу повторений внутри каждого объекта
       const sortByContacts = data.reduce((acc, val) => {
@@ -295,13 +295,18 @@ export const nodesAndEdgesThunkCreater =
       // ]
 
       // Сортируем массив по пересечению и связям с главными узлами
+      console.warn('ОСТАНОВИЛСЯ ЗДЕСЬ: excludeCoincidenceOrMainNodes')
       const excludeCoincidenceOrMainNodes = sortByСoincidence.map(arr => {
         return arr.reduce((acc, val) => {
-            if(val.coincidence === true || val.mainNodes === true ) acc = [...acc, val];
+            if(mutualСonnections){
+              if(val.coincidence === true || val.mainNodes === true ) acc = [...acc, val];
+            } else {
+              acc = [...acc, val];
+            }
             return acc;
         }, []);
       })
-
+      console.log(excludeCoincidenceOrMainNodes)
       // Приводим данные к одному массиву
       const concatArr = excludeCoincidenceOrMainNodes.reduce((acc, val) => (acc.concat(val)), []);
 

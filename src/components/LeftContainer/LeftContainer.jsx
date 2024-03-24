@@ -5,19 +5,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { actionCreatorSetOption } from '../../redux/options_reducer';
+import { actionCreatorSetOption, actionCreatorIsCoincidence } from '../../redux/options_reducer';
 import "./LeftContainer.css";
 import { actionCreatorIdSelectNode } from '../../redux/vis_reducer';
 
 export const LeftContainer = () => {
   const { nodes, networkLink } = useSelector(store => store.vis);
-  const { startTime, endTime, physics, mutualСonnections } = useSelector(store => store.options); 
+  const { startTime, endTime, physics, mutualСonnections, isCoincidence } = useSelector(store => store.options); 
   const dispatch = useDispatch();
   const setOption = (name, value) => dispatch(actionCreatorSetOption(name, value));
   const setIdSelectNode = id =>  dispatch(actionCreatorIdSelectNode(id));
 
   const [arrSelect, setArrSelect] = useState([]);
-
+  
   const handleChange = (event) => setOption(event.target.name, event.target.value);
   const handleCheck = (event) => setOption(event.target.name, event.target.checked);
   const handleSelect = (event) =>  setOption(event.target.name, parseInt(event.target.value));

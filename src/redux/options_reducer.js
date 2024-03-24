@@ -1,6 +1,8 @@
 // import {InferActionsTypes} from './redux-store';
 const SET_DIR_NAME = 'SET_DIR_NAME';
 const SET_OPTION = 'SET_OPTION';
+const IS_COINCIDENCE = 'ISCOINCIDENCE';
+
 const getDate = () => {
   const i = n => (n < 10)? '0'+n: n, e = new Date();
   return i(e.getFullYear())+'-'+i(e.getMonth() + 1)+'-'+i(e.getDate());
