@@ -4,12 +4,20 @@ import Graph from "react-graph-vis";
 
 function VisNetwork(props) {
   const {nodes, edges, physics, setNetworkLink, setIdSelectNode} = props;
+  console.log(edges)
   const graph = {
     nodes, edges
   };
   const options = {
     locale:"ru", 
     height: "800px",
+    edges:{
+      arrows: {
+        to: {
+          enabled: false, // Выключает стрелку по направлению к
+        }
+      }
+    },
     nodes: {
       shape: "dot",
       size: 16,

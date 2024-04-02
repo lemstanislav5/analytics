@@ -322,8 +322,8 @@ export const nodesAndEdgesThunkCreater =
 
       const edges = concatArr.reduce((acc, val) => {
         const from = nodes.find(item => item['label'] === val['contact A']).id;
-        const to = nodes.find(item => item['label'] === val['contact B']).id
-        acc = [...acc, {from, to, label: val.count, font: { align: "horizontal" }} ]
+        const to = nodes.find(item => item['label'] === val['contact B']).id;
+        acc = [...acc, {from, to, label: val.count.toString(), font: { align: "horizontal" }} ];
         return acc;
       }, []);
       dispatch(actionCreatorEdges(edges));

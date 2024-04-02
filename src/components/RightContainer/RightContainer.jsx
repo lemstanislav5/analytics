@@ -19,7 +19,6 @@ import { actionCreatorSetOption } from '../../redux/options_reducer';
 import { actionCreatorNetworkLink, actionCreatorIdSelectNode } from '../../redux/vis_reducer';
 import VisNetwork from './VisNetwork';
 import { saveImg } from '../../utilities/utilities';
-
 export const RightContainer = () => {
   const dispatch = useDispatch();
   const {networkLink} = useSelector(store => store.vis);
