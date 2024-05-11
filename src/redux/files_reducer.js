@@ -76,16 +76,16 @@ export const selectDirThunkCreater = (name, path) => {
   };
 };
 
-export const getDataFilesThunkCreater = (files) => {
+export const getDataFilesThunkCreater = files => {
   const readExcel = (file, onloadStartThunk, onloadEndThunk, startTime) => {
     const {name, size} = file;
     return new Promise((resolve, reject) => {
       const fr = new FileReader();
-      fr.readAsBinaryString(file);
-      fr.onloadstart = (e) => onloadStartThunk(e, name, size, startTime);
-      fr.onloadend = (e) => onloadEndThunk(e, name, size, startTime);
+      fr.readAsArrayBuffer(file);
+      fr.onloadstart = e => onloadStartThunk(e, name, size, startTime);
+      fr.onloadend = e => onloadEndThunk(e, name, size, startTime);
       fr.onerror = reject;
-      fr.onload  = (e) => { 
+      fr.onload  = e => {
         const bstr = e.target.result;
         const wb = XLSX.read(bstr, { type: 'binary' }); 
         const wsname = wb.SheetNames[0];

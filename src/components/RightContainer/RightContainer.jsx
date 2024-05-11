@@ -102,7 +102,7 @@ export const RightContainer = () => {
         Выберете каталог с файлами xlcx
       </div>
       <Form>  
-        <Row className="d-flex align-items-end flex-row "> 
+        <Row className="d-flex align-items-end flex-row"> 
           <Col xs="auto" className="my-1">
             <Form.Control
               size="sm"
