@@ -85,14 +85,11 @@ export const getDataFilesThunkCreater = (files) => {
       fr.onloadstart = (e) => onloadStartThunk(e, name, size, startTime);
       fr.onloadend = (e) => onloadEndThunk(e, name, size, startTime);
       fr.onerror = reject;
-      fr.onload  = (e) => {
-        /* Parse data */
+      fr.onload  = (e) => { 
         const bstr = e.target.result;
-        const wb = XLSX.read(bstr, { type: 'binary' });
-        /* Get first worksheet */
+        const wb = XLSX.read(bstr, { type: 'binary' }); 
         const wsname = wb.SheetNames[0];
-        const ws = wb.Sheets[wsname];
-        /* Convert array of arrays */
+        const ws = wb.Sheets[wsname]; 
         const data = XLSX.utils.sheet_to_json(ws, {
           blankRows: false, defval: ''
         });
@@ -152,6 +149,8 @@ export const getFilterForTimeThunkCreater =
   ) => {
     return dispatch => {
       const functionStartTime = new Date().getTime();
+      console.log(data)
+      debugger
       const sortResult =  data.reduce((accumulatorData, currentValueData) => { 
         const res = currentValueData
             .filter(item => {

@@ -51,7 +51,7 @@ export const RightContainer = () => {
   const [state, setState] = useState({
     newLable: undefined
   });
-  const [fileDescription, setFileDescription] = useState(null);
+
   const [buildDiagram, setBuildDiagram] =  useState(false);
   
   //!network----------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ export const RightContainer = () => {
     });
   }
 //!network----------------------------------------------------------------------------------
-  
+  //Выбор кталога
   const selectDirectiri = (event) => {
     addEvent('Каталог выбран');
     const data = Object.values(event.target.files)
@@ -86,8 +86,8 @@ export const RightContainer = () => {
           const {name, size} = file;
           return {name, size};
         }
-      })
-    setFileDescription(data);
+      });
+    console.log(data)
     let { name, path } = event.target.files[0];
     selectDir(name, path);
     getDataFiles(event.target.files);
