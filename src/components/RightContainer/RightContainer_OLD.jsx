@@ -80,7 +80,7 @@ export const RightContainer = () => {
   //Выбор кталога
   const selectDirectiri = (event) => {
     addEvent('Каталог выбран');
-    const data = Object.values(event.target.files)
+    const data = (event.target.files)
       .map((file) => {
         if(file.name.indexOf('.xlsx') !== -1) {
           const {name, size} = file;
