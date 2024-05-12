@@ -8,7 +8,12 @@ const READING_FILES = 'READING_FILES';
 const FILES_SIZE = 'FILES_SIZE';
 const SIZE_OF_READ_FILES = 'SIZE_OF_READ_FILES';
 
-export const initialState = { data: [], filesSize: null };
+export const initialState = { 
+  filesData: [],      // Прочитанные из файлов данные
+  filesSize: 0,       // Размер всех файлов каталога (для прогрессбара)
+  sizeOfReadFiles: 0, // Размер прочитанных файлов (для прогрессбара)
+  filesEvents: [],    // Массив событий обработки файлов
+};
 
 export const actionCreatorDataFiles = data => ({ type: READING_FILES, data });
 export const actionCreatorFilesSize = size => ({ type: FILES_SIZE, size });
@@ -33,14 +38,7 @@ export const files = (state = initialState, action) => {
 export const getDataFilesThunkCreater = files => {
   // Посчитаем общий размер файлов
   const countingFileSizes = Object.values(files).reduce((acc, val) => acc + val.size, 0);
-  
-  return dispatch => {
-    dispatch(actionCreatorFilesSize(countingFileSizes));
-    console.log(1111)
-  }
-
-
-
+  // Функция чтения XLSX файлов
   const readExcel = (file, onloadStartThunk, onloadEndThunk, startTime) => {
     const {name, size} = file;
     return new Promise((resolve, reject) => {
@@ -59,6 +57,14 @@ export const getDataFilesThunkCreater = files => {
       };
     });
   };
+  return dispatch => {
+    dispatch(actionCreatorFilesSize(countingFileSizes));
+    console.log(1111)
+  }
+
+
+
+
   
   return (dispatch) => {
     // const onloadStartThunk = (e, name, size, functionStartTime) => {
