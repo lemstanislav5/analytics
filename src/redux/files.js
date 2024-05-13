@@ -19,14 +19,15 @@ export const initialState = {
 export const actionCreatorFilesData = data => ({ type: READING_FILES, data });
 export const actionCreatorFilesSize = size => ({ type: FILES_SIZE, size });
 export const actionCreatorSizeOfReadFiles = sizeOfReadFiles => ({ type: SIZE_OF_READ_FILES, sizeOfReadFiles });
-export const actionCreatorFilesEvents = event => ({ type: FILES_SIZE, event });
+export const actionCreatorFilesEvents = event => ({ type: FILES_EVENTS, event });
 
 export const files = (state = initialState, action) => {
+  console.log(action)
   switch (action.type) {
     case READING_FILES: {
-      return {...state, filesData: action.data.reduce((accumulator, currentValue) => {
-        if(currentValue.length > 0) accumulator = [...accumulator, currentValue];
-        return accumulator;
+      return {...state, filesData: action.data.reduce((acc, cur) => {
+        if(cur.length > 0) acc = [...acc, cur];
+        return acc;
       }, [])};
     }
     case FILES_SIZE: return { ...state, filesSize: action.size }
