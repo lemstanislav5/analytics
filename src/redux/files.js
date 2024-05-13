@@ -10,26 +10,26 @@ const SIZE_OF_READ_FILES = 'SIZE_OF_READ_FILES';
 const FILES_EVENTS = 'FILES_EVENTS';
 
 export const initialState = { 
-  readingFiles: [],      // Прочитанные из файлов данные
+  filesData: [],      // Прочитанные из файлов данные
   filesSize: 0,       // Размер всех файлов каталога (для прогрессбара)
   sizeOfReadFiles: 0, // Размер прочитанных файлов (для прогрессбара)
   filesEvents: [],    // Массив событий обработки файлов
 };
 
-export const actionCreatorDataFiles = readingFiles => ({ type: READING_FILES, readingFiles });
-export const actionCreatorFilesSize = filesSize => ({ type: FILES_SIZE, filesSize });
+export const actionCreatorFilesData = data => ({ type: READING_FILES, data });
+export const actionCreatorFilesSize = size => ({ type: FILES_SIZE, size });
 export const actionCreatorSizeOfReadFiles = sizeOfReadFiles => ({ type: SIZE_OF_READ_FILES, sizeOfReadFiles });
 export const actionCreatorFilesEvents = event => ({ type: FILES_SIZE, event });
 
 export const files = (state = initialState, action) => {
   switch (action.type) {
     case READING_FILES: {
-      return {...state, readingFiles: action.data.reduce((accumulator, currentValue) => {
+      return {...state, filesData: action.data.reduce((accumulator, currentValue) => {
         if(currentValue.length > 0) accumulator = [...accumulator, currentValue];
         return accumulator;
       }, [])};
     }
-    case FILES_SIZE: return { ...state, filesSize: action.filesSize }
+    case FILES_SIZE: return { ...state, filesSize: action.size }
     case SIZE_OF_READ_FILES: return { ...state, sizeOfReadFiles: action.sizeOfReadFiles }
     case FILES_EVENTS: return { ...state, filesEvents: [...state.filesEvents, action.event]}
     default: {
@@ -48,9 +48,9 @@ export const getDataFilesThunkCreater = files => {
     return new Promise((resolve, reject) => {
       const fr = new FileReader();
       fr.readAsArrayBuffer(file);
-      // fr.onloadstart = e => onloadStartThunk(e, name, size, startTime);
-      // fr.onloadend = e => onloadEndThunk(e, name, size, startTime);
-      fr.onerror = reject;
+      fr.onloadstart = e => onloadStartThunk(e, name, size, startTime);
+      fr.onloadend = e => onloadEndThunk(e, name, size, startTime);
+      fr.onerror = reject;//! reject(err)
       fr.onload  = e => {
         const bstr = e.target.result;
         const wb = XLSX.read(bstr, { type: 'binary' }); 
@@ -64,37 +64,31 @@ export const getDataFilesThunkCreater = files => {
   return dispatch => {
     // Добавляем в стейт размер прочитанных файлов
     dispatch(actionCreatorFilesSize(countingFileSizes));
-    console.log(1111)
-  }
+    console.log(countingFileSizes)
 
-
-
-
-  
-  return (dispatch) => {
-    // const onloadStartThunk = (e, name, size, functionStartTime) => {
-    //   const functionEndTime = new Date().getTime();
-    //   dispatch(actionCreatorEvents(readExcel.name + ': Приступил к чтению файла: ' + name + ', размером: ' + size + ' байт, затрачено время: ' + (functionEndTime - functionStartTime) + ' мс.'));
-    // }
-    // const onloadEndThunk = (e, name, size, functionStartTime) => {
-    //   const functionEndTime = new Date().getTime();
-    //   dispatch(actionCreatorEvents(readExcel.name + ': Прочитан файл: ' + name + ', размером: ' + size + ' байт, затрачено время: ' + (functionEndTime - functionStartTime) + ' мс.'));
-    // }
+    const onloadStartThunk = (e, name, size, functionStartTime) => {
+      const functionEndTime = new Date().getTime();
+      dispatch(actionCreatorFilesEvents(readExcel.name + ': Приступил к чтению файла: ' + name + ', размером: ' + size + ' байт, затрачено время: ' + (functionEndTime - functionStartTime) + ' мс.'));
+    }
+    const onloadEndThunk = (e, name, size, functionStartTime) => {
+      const functionEndTime = new Date().getTime();
+      dispatch(actionCreatorFilesEvents(readExcel.name + ': Прочитан файл: ' + name + ', размером: ' + size + ' байт, затрачено время: ' + (functionEndTime - functionStartTime) + ' мс.'));
+    }
     
     //Приводим прочитанные файлы к формату массива, далее методом reduce возвращаем массив промисов
     var arrPromises = Object.values(files)
-      .reduce((newArr, file) => {
+      .reduce((acc, file) => {
         const functionStartTime = new Date().getTime();
         if(file.name.indexOf('.xlsx') !== -1) {
-          // newArr.push(readExcel(file, onloadStartThunk, onloadEndThunk, functionStartTime));
+          acc.push(readExcel(file, onloadStartThunk, onloadEndThunk, functionStartTime));
         }
-        return newArr;
+        return acc;
       }, []);
 
     //Выполняем промисы  
     Promise.all(arrPromises)
       .then(
-        data => dispatch(actionCreatorDataFiles(data)),
+        data => dispatch(actionCreatorFilesData(data)),
         reason => alert(reason)
       );
   };
