@@ -7,27 +7,31 @@ const XLSX = require('xlsx');
 const READING_FILES = 'READING_FILES';
 const FILES_SIZE = 'FILES_SIZE';
 const SIZE_OF_READ_FILES = 'SIZE_OF_READ_FILES';
+const FILES_EVENTS = 'FILES_EVENTS';
 
 export const initialState = { 
-  filesData: [],      // Прочитанные из файлов данные
+  readingFiles: [],      // Прочитанные из файлов данные
   filesSize: 0,       // Размер всех файлов каталога (для прогрессбара)
   sizeOfReadFiles: 0, // Размер прочитанных файлов (для прогрессбара)
   filesEvents: [],    // Массив событий обработки файлов
 };
 
-export const actionCreatorDataFiles = data => ({ type: READING_FILES, data });
-export const actionCreatorFilesSize = size => ({ type: FILES_SIZE, size });
-
+export const actionCreatorDataFiles = readingFiles => ({ type: READING_FILES, readingFiles });
+export const actionCreatorFilesSize = filesSize => ({ type: FILES_SIZE, filesSize });
+export const actionCreatorSizeOfReadFiles = sizeOfReadFiles => ({ type: SIZE_OF_READ_FILES, sizeOfReadFiles });
+export const actionCreatorFilesEvents = event => ({ type: FILES_SIZE, event });
 
 export const files = (state = initialState, action) => {
   switch (action.type) {
     case READING_FILES: {
-      return {...state, data: action.data.reduce((accumulator, currentValue) => {
+      return {...state, readingFiles: action.data.reduce((accumulator, currentValue) => {
         if(currentValue.length > 0) accumulator = [...accumulator, currentValue];
         return accumulator;
       }, [])};
     }
-    case FILES_SIZE: return { ...state, filesSize: action.size };
+    case FILES_SIZE: return { ...state, filesSize: action.filesSize }
+    case SIZE_OF_READ_FILES: return { ...state, sizeOfReadFiles: action.sizeOfReadFiles }
+    case FILES_EVENTS: return { ...state, filesEvents: [...state.filesEvents, action.event]}
     default: {
       return state;
     }
@@ -58,6 +62,7 @@ export const getDataFilesThunkCreater = files => {
     });
   };
   return dispatch => {
+    // Добавляем в стейт размер прочитанных файлов
     dispatch(actionCreatorFilesSize(countingFileSizes));
     console.log(1111)
   }
