@@ -22,7 +22,6 @@ export const actionCreatorSizeOfReadFiles = sizeOfReadFiles => ({ type: SIZE_OF_
 export const actionCreatorFilesEvents = event => ({ type: FILES_EVENTS, event });
 
 export const files = (state = initialState, action) => {
-  console.log(action)
   switch (action.type) {
     case READING_FILES: {
       return {...state, filesData: action.data.reduce((acc, cur) => {
@@ -33,9 +32,7 @@ export const files = (state = initialState, action) => {
     case FILES_SIZE: return { ...state, filesSize: action.size }
     case SIZE_OF_READ_FILES: return { ...state, sizeOfReadFiles: action.sizeOfReadFiles }
     case FILES_EVENTS: return { ...state, filesEvents: [...state.filesEvents, action.event]}
-    default: {
-      return state;
-    }
+    default: return state;
   }
 };
 
